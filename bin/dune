@@ -1,0 +1,4 @@
+(executable
+ (public_name Celery)
+ (name main)
+ (libraries Celery))
