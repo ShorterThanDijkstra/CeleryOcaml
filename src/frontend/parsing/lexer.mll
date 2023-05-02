@@ -30,6 +30,8 @@ rule read_token = parse
   | "else" { ELSE }
   | "let" { LET }
   | "==" { EQUAL }
+  | "<"  { LT }
+  | ">"  { GT }
   | "="  { ASSIGN }
   | "in" { IN }
   | "+"  { ADD }
@@ -41,6 +43,7 @@ rule read_token = parse
   | "("  { LPAREN }
   | ")"  { RPAREN }
   | ";"  { SEMICOLON }
+  | "rec" { REC }
   | id { ID (Lexing.lexeme lexbuf) }
   | whitespace { read_token lexbuf }
   | newline { next_line lexbuf; read_token lexbuf }

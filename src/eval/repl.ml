@@ -10,10 +10,11 @@ let rec repl () : unit=
   let input = read_line ()
      in try let program = parse input 
         in let res = eval_program program
-           in print_endline (Value.show_exprval res);
+           in print_endline (Mapenv.show_exprval res);
               repl ()
         with 
-        | _ -> print_endline "error"; repl()
+        | (Lexer.SyntaxError msg) -> print_endline msg; repl()
+        | EvalError -> print_endline "eval error"; repl()
 
 let () = print_endline "";
          repl ()

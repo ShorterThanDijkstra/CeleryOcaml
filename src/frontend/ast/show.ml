@@ -1,6 +1,7 @@
 open Expr
 let rec show_expr e = match e with
     | Let(var, rhs, body) -> "let " ^ var ^ " = " ^ (show_expr rhs) ^ " in " ^ (show_expr body)
+    | Letrec(f_name, arg, f_body, body) -> "let rec " ^ f_name ^ " " ^ arg ^ " = " ^ show_expr f_body ^ " = " ^ show_expr body
     | Number i -> string_of_int i 
     | Var name -> name 
     | Op op -> show_op op
@@ -12,7 +13,9 @@ let rec show_expr e = match e with
     and show_op op = match op with
         | Sum (left, right) -> show_expr left ^ " + " ^ show_expr right
         | Sub (left, right) -> show_expr left ^ " - " ^ show_expr right
-        | Equal (left, right) -> show_expr left ^ "==" ^ show_expr right
+        | Equal (left, right) -> show_expr left ^ " == " ^ show_expr right
+        | Lt (left, right) -> show_expr left ^ " < " ^ show_expr right
+        | Gt (left, right) -> show_expr left ^ " > " ^ show_expr right
 
 let show_program p = match p with
   | Program expr ->show_expr expr
