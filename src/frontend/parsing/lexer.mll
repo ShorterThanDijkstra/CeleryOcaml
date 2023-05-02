@@ -23,11 +23,24 @@ let newline = '\r' | '\n' | "\r\n"
 
 rule read_token = parse 
   | int { INT (int_of_string (Lexing.lexeme lexbuf))}
+  | "true" { TRUR }
+  | "false" { FALSE }
+  | "if" { IF }
+  | "then" { THEN }
+  | "else" { ELSE }
   | "let" { LET }
-  | "="  { EQUAL }
+  | "==" { EQUAL }
+  | "="  { ASSIGN }
   | "in" { IN }
   | "+"  { ADD }
   | "-"  { SUB }
+  | "func" { FUNC }
+  | "->" { RARROW }
+  | "{"  { LCURRY }
+  | "}"  { RCURRY }
+  | "("  { LPAREN }
+  | ")"  { RPAREN }
+  | ";"  { SEMICOLON }
   | id { ID (Lexing.lexeme lexbuf) }
   | whitespace { read_token lexbuf }
   | newline { next_line lexbuf; read_token lexbuf }
