@@ -17,7 +17,7 @@ let rec eval (expr: Expr.expr) (env: (string, Value.denval) Hashtbl.t) :Value.ex
     | Var name -> Value.to_exprval (Mapenv.apply_env name env)
     | Bool b -> BoolExpVal b
     | Sequence exprs -> eval_exprs exprs env
-    | Func(arg, body) -> Value.ClojureExpVal (Value.Procedure(arg, body, env))
+    | Func(arg, body) -> Value.ClosureExpVal (Value.Procedure(arg, body, env))
     | Call(rator, rand) -> let rator_val = eval rator env in 
                            let rand_val = eval rand env in 
                            apply_clojure rator_val rand_val
@@ -36,7 +36,7 @@ let rec eval (expr: Expr.expr) (env: (string, Value.denval) Hashtbl.t) :Value.ex
                 | (Value.NumberExpVal i1, Value.NumberExpVal i2) -> Value.BoolExpVal (i1 = i2)
                 | _ -> raise (EvalError "eval error")
     and apply_clojure clj value = match clj with
-          | Value.ClojureExpVal(Value.Procedure(arg, body, env)) -> 
+          | Value.ClosureExpVal(Value.Procedure(arg, body, env)) -> 
               let new_env = Mapenv.extend_env arg (Value.to_denval value) env in
                   eval body new_env
           | _ -> raise (EvalError "eval error")

@@ -39,9 +39,9 @@ expr:
   | left=expr; SUB; right=expr { Op(Sub(left, right)) }
   | TRUR { Bool true }
   | FALSE { Bool false }
-  | IF; pred=expr; THEN; conseq=expr; ELSE; alt=expr { If(pred, conseq, alt)}
+  | IF; pred=expr; THEN; conseq=expr; ELSE; alt=expr { If(pred, conseq, alt) }
   | left=expr; EQUAL; right=expr { Op(Equal(left, right)) }
   | FUNC; arg=ID; RARROW; body=expr { Func(arg, body) }
   | rator=expr; rand=expr { Call(rator, rand) }
-  | LCURRY; exprs=separated_list(SEMICOLON, expr); RCURRY { Sequence exprs}
+  | LCURRY; exprs=separated_list(SEMICOLON, expr); RCURRY { Sequence exprs }
 
