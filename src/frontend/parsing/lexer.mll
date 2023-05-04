@@ -36,6 +36,8 @@ rule read_token = parse
   | "in" { IN }
   | "+"  { ADD }
   | "-"  { SUB }
+  | "*"  { MUL }
+  | "/"  { DIV }
   | "func" { FUNC }
   | "->" { RARROW }
   | "{"  { LCURRY }
@@ -44,6 +46,7 @@ rule read_token = parse
   | ")"  { RPAREN }
   | ";"  { SEMICOLON }
   | "rec" { REC }
+  | "debug" { DEBUG }
   | id { ID (Lexing.lexeme lexbuf) }
   | whitespace { read_token lexbuf }
   | newline { next_line lexbuf; read_token lexbuf }

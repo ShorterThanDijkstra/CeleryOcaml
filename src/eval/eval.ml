@@ -10,14 +10,16 @@ let bool_bin_op left right op = match (left, right) with
 | _ -> raise EvalError 
 
 let rec eval expr env
-  = match expr with 
+  = 
+    (* print_endline (Ast.Show.show_expr expr);  *)
+    match expr with 
     | Op op -> eval_op op env
     | Let(var, rhs, body) -> 
         let rhs_val = eval rhs env
         in let new_env = extend_envs [var] [(to_denval rhs_val)] env
            in  eval body new_env 
     | Letrec(name, arg, f_body, body) -> let new_env = ExtendedRec(name, arg, f_body, env) in 
-                                 eval body new_env            
+                                         eval body new_env            
     | Number i -> NumberExpVal i
     | Var name -> to_exprval (apply_env name env)
     | Bool b -> BoolExpVal b
@@ -35,14 +37,17 @@ let rec eval expr env
     and eval_op op env = match op with
           | Sum(left, right) -> num_bin_op (eval left env) (eval right env) (+)
           | Sub(left, right) -> num_bin_op (eval left env) (eval right env) (-)
+          | Mul(left, right) -> num_bin_op (eval left env) (eval right env) ( * )
+          | Div(left, right) -> num_bin_op (eval left env) (eval right env) (/)
           | Gt(left, right) -> bool_bin_op (eval left env) (eval right env) (>)
           | Lt(left, right) -> bool_bin_op (eval left env) (eval right env) (<)
           | Equal(left, right) -> bool_bin_op (eval left env) (eval right env) (=)
+          | Debug(expr) -> print_endline (show_exprval (eval expr env)); Unit
           
     and apply_closure clj value = match clj with
           | ClosureExpVal(Procedure(arg, body, env)) -> 
-              print_endline (show_exprval value);
               let new_env = extend_envs [arg] [(to_denval value)] env in
+                  (* print_env new_env; *)
                   eval body new_env
           | _ -> raise EvalError 
     and eval_exprs exprs env = match exprs with

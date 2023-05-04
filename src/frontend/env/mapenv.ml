@@ -1,6 +1,6 @@
 exception ApplyEnvError of string
 
-type exprval = BoolExpVal of bool | NumberExpVal of int | ClosureExpVal of procedure
+type exprval = BoolExpVal of bool | NumberExpVal of int | ClosureExpVal of procedure | Unit
 and  denval = DenVal of exprval
 and  procedure = Procedure of string * Ast.Expr.expr * env 
 and  env = Empty | Extended of (string, denval) Hashtbl.t  * env | ExtendedRec of string * string * Ast.Expr.expr * env
@@ -23,8 +23,6 @@ let rec apply_env var env = match env with
                                    match find with
                                     | None -> apply_env var saved_env
                                     | Some value -> value
-                                    
-  
 
 let to_exprval dv = match dv with
   | DenVal ev -> ev
@@ -35,3 +33,12 @@ let show_exprval ev = match ev with
   | BoolExpVal b -> string_of_bool b 
   | NumberExpVal i -> string_of_int i
   | ClosureExpVal _ -> "<procedure>"
+  | Unit -> "unit"
+
+  let rec print_env env = match env with
+  | Empty -> print_endline "END\n-------------------------------"
+  | ExtendedRec(name, arg, f_body, saved_env) -> ignore(arg); ignore(f_body); print_endline ("rec: "^ name ^ "\n"); print_env saved_env;
+  | Extended(tb, saved_env) -> Hashtbl.iter (fun key value -> Printf.printf "%s:%s;" key (show_exprval (to_exprval value))) tb;
+                               print_endline "\n";
+                               print_env saved_env
+
