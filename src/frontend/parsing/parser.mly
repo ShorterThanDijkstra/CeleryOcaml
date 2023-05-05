@@ -41,7 +41,7 @@
 %left ID 
 %left INT
 %nonassoc LPAREN
-%nonassoc APP /* %left APP is not right. It will NOT make the rule left-associative(I don't know why) */
+%nonassoc APP /* Writing %left APP is not right. It will NOT make the rule left-associative(I don't know why) */
 
 
 %type <Ast.Expr.program> program

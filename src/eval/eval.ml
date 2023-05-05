@@ -2,11 +2,11 @@ open Ast.Expr
 open Env.Mapenv
 exception EvalError
 let num_bin_op left right op = match (left, right) with
-    | (NumberExpVal i1, NumberExpVal i2) -> NumberExpVal (op i1 i2)
+    | (NumberVal i1, NumberVal i2) -> NumberVal (op i1 i2)
     | _ -> raise EvalError 
 
 let bool_bin_op left right op = match (left, right) with
-| (NumberExpVal i1, NumberExpVal i2) -> BoolExpVal (op i1 i2)
+| (NumberVal i1, NumberVal i2) -> BoolVal (op i1 i2)
 | _ -> raise EvalError 
 
 let rec eval expr env
@@ -21,19 +21,19 @@ let rec eval expr env
         eval body new_env
     | Letrec(name, args, f_body, body) -> let new_env = ExtendedRec(name, args, f_body, env) in 
                                           eval body new_env            
-    | Number i -> NumberExpVal i
+    | Number i -> NumberVal i
     | Var name -> to_exprval (apply_env name env)
-    | Bool b -> BoolExpVal b
+    | Bool b -> BoolVal b
     | Sequence exprs -> eval_exprs exprs env
-    | Func(args, body) -> ClosureExpVal (Procedure(args, body, env))
+    | Func(args, body) -> ClosureVal([], (Procedure(args, body, env)))
     | Call(rator, rand) -> let rator_val = eval rator env in 
                            let rand_val = eval rand env in
                            apply_closure rator_val rand_val
     | If(pred, conseq, alt) -> 
         let pred_val = eval pred env
         in match pred_val with
-          | BoolExpVal true -> eval conseq env
-          | BoolExpVal false -> eval alt env 
+          | BoolVal true -> eval conseq env
+          | BoolVal false -> eval alt env 
           | _ -> raise EvalError 
     and eval_op op env = match op with
           | Sum(left, right) -> num_bin_op (eval left env) (eval right env) (+)
@@ -43,15 +43,17 @@ let rec eval expr env
           | Gt(left, right) -> bool_bin_op (eval left env) (eval right env) (>)
           | Lt(left, right) -> bool_bin_op (eval left env) (eval right env) (<)
           | Equal(left, right) -> bool_bin_op (eval left env) (eval right env) (=)
-          | Debug(expr) -> print_endline (show_exprval (eval expr env)); Unit
+          | Debug(expr) -> print_endline (show_exprval (eval expr env)); UnitVal
           
-    and apply_closure clj value = match clj with
-          | ClosureExpVal(Procedure(args, body, env)) -> 
-              let new_env = extend_env (List.hd args) (to_denval value) env in
-                  if (List.length args) = 1 
-                  then eval body new_env 
-                  else ClosureExpVal(Procedure (List.tl args, body, new_env)) (* Curry *)
+    and apply_closure cls value = match cls with
+          | ClosureVal(args, Procedure(paras, body, env)) -> 
+              let values = (List.cons (to_denval value) args) in
+              if List.length values = List.length paras 
+              then let new_env = extend_envs paras (List.rev values) env in 
+                   eval body new_env 
+              else ClosureVal(values, Procedure(paras, body, env)) (* Curry *)
           | _ -> raise EvalError 
+          
     and eval_exprs exprs env = match exprs with
       | []-> raise EvalError
       | [expr]-> eval expr env

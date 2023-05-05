@@ -1,6 +1,6 @@
 exception ApplyEnvError of string
 
-type exprval = BoolExpVal of bool | NumberExpVal of int | ClosureExpVal of procedure | Unit
+type exprval = BoolVal of bool | NumberVal of int | ClosureVal of denval list * procedure | UnitVal
 and  denval = DenVal of exprval
 and  procedure = Procedure of string list * Ast.Expr.expr * env 
 and  env = Empty | Extended of (string, denval) Hashtbl.t  * env | ExtendedRec of string * string list * Ast.Expr.expr * env
@@ -22,7 +22,7 @@ let rec apply_env var env = match env with
   | Empty -> raise (ApplyEnvError ("no binding for " ^ var))
   | ExtendedRec(name, args, f_body, saved_env) -> 
       if name = var 
-      then DenVal (ClosureExpVal (Procedure(args, f_body, env)))
+      then DenVal (ClosureVal ([], (Procedure(args, f_body, env))))
       else apply_env var saved_env
   | Extended(tb, saved_env) -> let find = Hashtbl.find_opt tb var in 
                                    match find with
@@ -35,10 +35,10 @@ let to_exprval dv = match dv with
 let to_denval ev = DenVal ev
 
 let show_exprval ev = match ev with
-  | BoolExpVal b -> string_of_bool b 
-  | NumberExpVal i -> string_of_int i
-  | ClosureExpVal _ -> "<procedure>"
-  | Unit -> "unit"
+  | BoolVal b -> string_of_bool b 
+  | NumberVal i -> string_of_int i
+  | ClosureVal _ -> "<procedure>"
+  | UnitVal -> "unit"
 
   let rec print_env env = match env with
   | Empty -> print_endline "END\n-------------------------------"
