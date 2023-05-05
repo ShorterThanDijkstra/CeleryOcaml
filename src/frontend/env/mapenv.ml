@@ -2,8 +2,8 @@ exception ApplyEnvError of string
 
 type exprval = BoolExpVal of bool | NumberExpVal of int | ClosureExpVal of procedure | Unit
 and  denval = DenVal of exprval
-and  procedure = Procedure of string * Ast.Expr.expr * env 
-and  env = Empty | Extended of (string, denval) Hashtbl.t  * env | ExtendedRec of string * string * Ast.Expr.expr * env
+and  procedure = Procedure of string list * Ast.Expr.expr * env 
+and  env = Empty | Extended of (string, denval) Hashtbl.t  * env | ExtendedRec of string * string list * Ast.Expr.expr * env
 
 let init_mapenv () :env = Empty
 
@@ -13,11 +13,16 @@ let extend_envs vars values env
         List.iter (fun (var, value)-> Hashtbl.add tb var value) (List.combine vars values);
         Extended(tb, env)
 
+let extend_env var value env 
+  = let tb = Hashtbl.create 1 in 
+    Hashtbl.add tb var value;
+    Extended(tb, env)
+
 let rec apply_env var env = match env with
   | Empty -> raise (ApplyEnvError ("no binding for " ^ var))
-  | ExtendedRec(name, arg, f_body, saved_env) -> 
+  | ExtendedRec(name, args, f_body, saved_env) -> 
       if name = var 
-      then DenVal (ClosureExpVal (Procedure(arg, f_body, env)))
+      then DenVal (ClosureExpVal (Procedure(args, f_body, env)))
       else apply_env var saved_env
   | Extended(tb, saved_env) -> let find = Hashtbl.find_opt tb var in 
                                    match find with

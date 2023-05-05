@@ -19,15 +19,15 @@ let rec eval expr env
         let vars = List.map (fun (var, _) ->var) bindings in 
         let new_env = extend_envs vars vals env in 
         eval body new_env
-    | Letrec(name, arg, f_body, body) -> let new_env = ExtendedRec(name, arg, f_body, env) in 
-                                         eval body new_env            
+    | Letrec(name, args, f_body, body) -> let new_env = ExtendedRec(name, args, f_body, env) in 
+                                          eval body new_env            
     | Number i -> NumberExpVal i
     | Var name -> to_exprval (apply_env name env)
     | Bool b -> BoolExpVal b
     | Sequence exprs -> eval_exprs exprs env
-    | Func(arg, body) -> ClosureExpVal (Procedure(arg, body, env))
+    | Func(args, body) -> ClosureExpVal (Procedure(args, body, env))
     | Call(rator, rand) -> let rator_val = eval rator env in 
-                           let rand_val = eval rand env in 
+                           let rand_val = eval rand env in
                            apply_closure rator_val rand_val
     | If(pred, conseq, alt) -> 
         let pred_val = eval pred env
@@ -46,10 +46,11 @@ let rec eval expr env
           | Debug(expr) -> print_endline (show_exprval (eval expr env)); Unit
           
     and apply_closure clj value = match clj with
-          | ClosureExpVal(Procedure(arg, body, env)) -> 
-              let new_env = extend_envs [arg] [(to_denval value)] env in
-                  (* print_env new_env; *)
-                  eval body new_env
+          | ClosureExpVal(Procedure(args, body, env)) -> 
+              let new_env = extend_env (List.hd args) (to_denval value) env in
+                  if (List.length args) = 1 
+                  then eval body new_env 
+                  else ClosureExpVal(Procedure (List.tl args, body, new_env)) (* Curry *)
           | _ -> raise EvalError 
     and eval_exprs exprs env = match exprs with
       | []-> raise EvalError

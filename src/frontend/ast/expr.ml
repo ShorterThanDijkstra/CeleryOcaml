@@ -1,11 +1,11 @@
 type expr = Let of (string * expr) list * expr | 
-            Letrec of string * string * expr * expr |
+            Letrec of string * string list * expr * expr |
             Number of int | 
             Bool of bool |
             Op of op | 
             If of expr * expr * expr |
             Var of string |
-            Func of string * expr |
+            Func of string list * expr |
             Call of expr * expr |
             Sequence of expr list
 

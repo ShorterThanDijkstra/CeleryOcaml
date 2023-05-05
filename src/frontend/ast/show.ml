@@ -1,12 +1,12 @@
 open Expr
 let rec show_expr e = match e with
     | Let(bindings, body) -> "(let " ^ "(" ^ (join_bindings bindings) ^ ")" ^ show_expr body
-    | Letrec(f_name, arg, f_body, body) -> "(letrec " ^ f_name ^ " " ^ arg ^ " = " ^ show_expr f_body ^ " = " ^ show_expr body ^ ")"
+    | Letrec(f_name, args, f_body, body) -> "(letrec " ^ f_name ^ " " ^ (String.concat " " args) ^ " = " ^ show_expr f_body ^ " = " ^ show_expr body ^ ")"
     | Number i -> string_of_int i 
     | Var name -> name 
     | Op op -> show_op op
     | Bool b -> string_of_bool b
-    | Func(arg, body) -> ignore arg; ignore body; "function"
+    | Func(args, body) -> ignore args; ignore body; "function"
     | If(pred, conseq, alt) -> "(if " ^ show_expr pred ^ " then " ^ show_expr conseq ^ " else " ^ show_expr alt ^")"
     | Sequence exprs ->  List.fold_left (fun str folded -> folded ^ "\n" ^ str) "" (List.map show_expr exprs)
     | Call(rator, rand) -> "(" ^ show_expr rator ^ " " ^ show_expr rand^")"

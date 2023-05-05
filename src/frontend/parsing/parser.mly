@@ -38,8 +38,10 @@
 %left GT
 %left LT
 %left EQUAL
+%left ID 
 %left INT
-%left APP
+%nonassoc LPAREN
+%nonassoc APP /* %left APP is not right. It will NOT make the rule left-associative(I don't know why) */
 
 
 %type <Ast.Expr.program> program
@@ -49,8 +51,17 @@
 program: 
   | expr EOF { Program $1 }
 
+let_expr:
+  | LET; bs=separated_list(COMMA, bindings); IN; body=expr { Let(bs, body) }
+  | LET; f_name=ID; args=ID*; ASSIGN; f_body=expr; IN; body=expr { Let([(f_name, Func(args, f_body))], body) }
+
+bindings:
+  | var=ID; ASSIGN; rhs=expr { (var, rhs) }
+
+letrec_expr: 
+  | LET; REC; name=ID; args=ID+; ASSIGN; f_body=expr; IN; body=expr { Letrec(name, args, f_body, body) }
+
 expr:
-  | rator=expr; rand=expr; %prec APP { Call(rator, rand) }
   | LPAREN; e=expr; RPAREN { e }
   | i=INT { Number i }
   | e=let_expr { e }
@@ -67,16 +78,9 @@ expr:
   | FALSE { Bool false }
   | IF; pred=expr; THEN; conseq=expr; ELSE; alt=expr { If(pred, conseq, alt) }
   | left=expr; EQUAL; right=expr { Op(Equal(left, right)) }
-  | FUNC; arg=ID; RARROW; body=expr { Func(arg, body) }
+  | FUNC; args=ID+; RARROW; body=expr { Func(args, body) }
   | LCURRY; exprs=separated_list(SEMICOLON, expr); RCURRY { Sequence exprs }
+  | rator=expr; rand=expr; %prec APP { Call(rator, rand) }
 
-let_expr:
-  | LET; bs=separated_list(COMMA, bindings); IN; body=expr { Let(bs, body) }
-  | LET; f_name=ID; arg=ID; ASSIGN; f_body=expr; IN; body=expr { Let([(f_name, Func(arg, f_body))], body) }
 
-bindings:
-  | var=ID;ASSIGN;rhs=expr { (var, rhs) }
-
-letrec_expr: 
-  | LET; REC; name=ID; arg=ID; ASSIGN; f_body=expr; IN; body=expr { Letrec(name, arg, f_body, body) }
   
