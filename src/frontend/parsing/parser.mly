@@ -29,6 +29,7 @@
 %token LT 
 %token GT
 %token DEBUG
+%token COMMA
 
 %left ADD
 %left SUB
@@ -52,8 +53,8 @@ expr:
   | rator=expr; rand=expr; %prec APP { Call(rator, rand) }
   | LPAREN; e=expr; RPAREN { e }
   | i=INT { Number i }
-  | LET; var=ID; ASSIGN; rhs=expr; IN; body=expr { Let(var, rhs, body) }
-  | LET; REC; name=ID; arg=ID; ASSIGN; f_body=expr; IN; body=expr { Letrec(name, arg, f_body, body) }
+  | e=let_expr { e }
+  | e=letrec_expr { e }
   | var=ID; {Var var}
   | left=expr; ADD; right=expr { Op(Sum(left, right)) }
   | left=expr; SUB; right=expr { Op(Sub(left, right)) }
@@ -69,3 +70,12 @@ expr:
   | FUNC; arg=ID; RARROW; body=expr { Func(arg, body) }
   | LCURRY; exprs=separated_list(SEMICOLON, expr); RCURRY { Sequence exprs }
 
+let_expr:
+  | LET; bs=separated_list(COMMA, bindings); IN; body=expr { Let(bs, body)}
+
+bindings:
+  | var=ID;ASSIGN;rhs=expr { (var, rhs)}
+
+letrec_expr: 
+  | LET; REC; name=ID; arg=ID; ASSIGN; f_body=expr; IN; body=expr { Letrec(name, arg, f_body, body) }
+  

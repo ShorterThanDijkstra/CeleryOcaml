@@ -1,4 +1,4 @@
-type expr = Let of string * expr * expr | 
+type expr = Let of (string * expr) list * expr | 
             Letrec of string * string * expr * expr |
             Number of int | 
             Bool of bool |

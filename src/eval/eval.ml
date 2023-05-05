@@ -11,13 +11,14 @@ let bool_bin_op left right op = match (left, right) with
 
 let rec eval expr env
   = 
-    (* print_endline (Ast.Show.show_expr expr);  *)
+    print_endline (Ast.Show.show_expr expr); 
     match expr with 
     | Op op -> eval_op op env
-    | Let(var, rhs, body) -> 
-        let rhs_val = eval rhs env
-        in let new_env = extend_envs [var] [(to_denval rhs_val)] env
-           in  eval body new_env 
+    | Let(bindings, body) -> 
+        let vals = List.map (fun (_, rhs)-> to_denval(eval rhs env)) bindings in 
+        let vars = List.map (fun (var, _) ->var) bindings in 
+        let new_env = extend_envs vars vals env in 
+        eval body new_env
     | Letrec(name, arg, f_body, body) -> let new_env = ExtendedRec(name, arg, f_body, env) in 
                                          eval body new_env            
     | Number i -> NumberExpVal i

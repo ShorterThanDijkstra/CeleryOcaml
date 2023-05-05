@@ -45,6 +45,7 @@ rule read_token = parse
   | "("  { LPAREN }
   | ")"  { RPAREN }
   | ";"  { SEMICOLON }
+  | ","  { COMMA }
   | "rec" { REC }
   | "debug" { DEBUG }
   | id { ID (Lexing.lexeme lexbuf) }
