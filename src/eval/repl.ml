@@ -6,7 +6,7 @@ let parse str =
    in Parser.program Lexer.read_token lexbuf
 
 let rec repl () : unit= 
-  print_string ">>> ";
+  print_string "λ= ";
   let input = read_line ()
      in try let program = parse input 
         in let res = eval_program program

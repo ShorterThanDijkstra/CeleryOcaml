@@ -71,10 +71,11 @@ expr:
   | LCURRY; exprs=separated_list(SEMICOLON, expr); RCURRY { Sequence exprs }
 
 let_expr:
-  | LET; bs=separated_list(COMMA, bindings); IN; body=expr { Let(bs, body)}
+  | LET; bs=separated_list(COMMA, bindings); IN; body=expr { Let(bs, body) }
+  | LET; f_name=ID; arg=ID; ASSIGN; f_body=expr; IN; body=expr { Let([(f_name, Func(arg, f_body))], body) }
 
 bindings:
-  | var=ID;ASSIGN;rhs=expr { (var, rhs)}
+  | var=ID;ASSIGN;rhs=expr { (var, rhs) }
 
 letrec_expr: 
   | LET; REC; name=ID; arg=ID; ASSIGN; f_body=expr; IN; body=expr { Letrec(name, arg, f_body, body) }
