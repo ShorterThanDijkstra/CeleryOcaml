@@ -1,7 +1,7 @@
 open Expr
 let rec show_expr e = match e with
     | Let(bindings, body) -> "(let " ^ "(" ^ (join_bindings bindings) ^ ")" ^ show_expr body
-    | Letrec(f_name, args, f_body, body) -> "(letrec " ^ f_name ^ " " ^ (String.concat " " args) ^ " = " ^ show_expr f_body ^ " = " ^ show_expr body ^ ")"
+    | Letrec(bs, body) -> ignore bs; "(letrec " ^ show_expr body ^ ")"
     | Number i -> string_of_int i 
     | Var name -> name 
     | Op op -> show_op op

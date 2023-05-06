@@ -1,5 +1,5 @@
 type expr = Let of (string * expr) list * expr | 
-            Letrec of string * string list * expr * expr |
+            Letrec of (string * string list * expr) list * expr |
             Number of int | 
             Bool of bool |
             Op of op | 

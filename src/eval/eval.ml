@@ -19,8 +19,8 @@ let rec eval expr env
         let vars = List.map (fun (var, _) ->var) bindings in 
         let new_env = extend_envs vars vals env in 
         eval body new_env
-    | Letrec(name, args, f_body, body) -> let new_env = ExtendedRec(name, args, f_body, env) in 
-                                          eval body new_env            
+    | Letrec(bindings, body) -> let new_env = ExtendedRec(bindings, env) in
+                                    eval body new_env       
     | Number i -> NumberVal i
     | Var name -> to_exprval (apply_env name env)
     | Bool b -> BoolVal b

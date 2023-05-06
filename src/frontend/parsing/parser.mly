@@ -51,16 +51,6 @@
 program: 
   | expr EOF { Program $1 }
 
-let_expr:
-  | LET; bs=separated_list(COMMA, bindings); IN; body=expr { Let(bs, body) }
-  | LET; f_name=ID; args=ID*; ASSIGN; f_body=expr; IN; body=expr { Let([(f_name, Func(args, f_body))], body) }
-
-bindings:
-  | var=ID; ASSIGN; rhs=expr { (var, rhs) }
-
-letrec_expr: 
-  | LET; REC; name=ID; args=ID+; ASSIGN; f_body=expr; IN; body=expr { Letrec(name, args, f_body, body) }
-
 expr:
   | LPAREN; e=expr; RPAREN { e }
   | i=INT { Number i }
@@ -83,4 +73,15 @@ expr:
   | rator=expr; rand=expr; %prec APP { Call(rator, rand) }
 
 
-  
+let_expr:
+  | LET; bs=separated_list(COMMA, let_bindings); IN; body=expr { Let(bs, body) }
+  | LET; f_name=ID; args=ID*; ASSIGN; f_body=expr; IN; body=expr { Let([(f_name, Func(args, f_body))], body) }
+
+let_bindings:
+  | var=ID; ASSIGN; rhs=expr { (var, rhs) }
+
+letrec_expr: 
+  | LET; REC; bs=separated_list(COMMA, letrec_bindings); IN; body=expr { Letrec(bs, body) }
+
+letrec_bindings:
+  |f_name=ID; paras=ID+; ASSIGN; f_body=expr { (f_name, paras, f_body) }

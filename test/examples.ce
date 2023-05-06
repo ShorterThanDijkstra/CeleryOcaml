@@ -1,0 +1,3 @@
+let rec fib n = if n < 2 then n else fib (n - 1) + fib (n - 2) in fib 30
+
+let rec even n = if n == 0 then true else odd (n - 1), odd n = if n == 0 then false else even (n - 1) in even 2023
