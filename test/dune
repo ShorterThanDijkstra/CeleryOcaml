@@ -1,1 +1,3 @@
-
+(tests
+ (names evaltests)
+ (libraries eval env ounit2))

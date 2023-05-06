@@ -1,6 +1,7 @@
 open Ast.Expr
 open Env.Mapenv
 exception EvalError
+
 let num_bin_op left right op = match (left, right) with
     | (NumberVal i1, NumberVal i2) -> NumberVal (op i1 i2)
     | _ -> raise EvalError 
@@ -61,3 +62,12 @@ let rec eval expr env
 
 let eval_program pg = match pg with
   | Program expr -> eval expr (init_mapenv ())
+
+let parse str = 
+  let open Parsing in
+      let lexbuf = Lexing.from_string str
+      in Parser.program Lexer.read_token lexbuf
+
+let run str = 
+     let program = parse str in 
+     eval_program program

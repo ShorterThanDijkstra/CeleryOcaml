@@ -1,3 +1,9 @@
 (executable
  (name repl)
+ (modules repl)
+ (libraries parsing ast env eval))
+
+(library
+ (name eval)
+ (modules eval)
  (libraries parsing ast env))
