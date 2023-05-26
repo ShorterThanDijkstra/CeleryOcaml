@@ -63,11 +63,20 @@ let rec eval expr env
 let eval_program pg = match pg with
   | Program expr -> eval expr (init_mapenv ())
 
-let parse str = 
+let parse_str str = 
   let open Parsing in
       let lexbuf = Lexing.from_string str
       in Parser.program Lexer.read_token lexbuf
 
-let run str = 
-     let program = parse str in 
+let run_str str = 
+     let program = parse_str str in 
      eval_program program
+
+let parse_file file = 
+  let open Parsing in 
+      let lexbuf = open_in file |> Lexing.from_channel 
+      in Parser.program Lexer.read_token lexbuf
+
+let run_file file = 
+  let program = parse_file file
+  in eval_program program

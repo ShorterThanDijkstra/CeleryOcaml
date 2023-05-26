@@ -3,6 +3,11 @@
  (modules repl)
  (libraries parsing ast env eval))
 
+(executable
+ (name interp)
+ (modules interp)
+ (libraries eval))
+
 (library
  (name eval)
  (modules eval)

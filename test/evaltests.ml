@@ -28,10 +28,10 @@ let rec add x y = if y == 0
 in add 746 391
 "
 let tests = "eval test" >::: [
-  "fib25" >:: (fun _ -> assert_equal (NumberVal 75025) (run fib25));
-  "even2022" >:: (fun _ -> assert_equal (BoolVal true) (run even2022));
-  "odd4088" >:: (fun _ -> assert_equal (BoolVal false) (run odd4088));
-  "add746_391" >:: (fun _ -> assert_equal (NumberVal 1137) (run add746_391));
+  "fib25" >:: (fun _ -> assert_equal (NumberVal 75025) (run_str fib25));
+  "even2022" >:: (fun _ -> assert_equal (BoolVal true) (run_str even2022));
+  "odd4088" >:: (fun _ -> assert_equal (BoolVal false) (run_str odd4088));
+  "add746_391" >:: (fun _ -> assert_equal (NumberVal 1137) (run_str add746_391));
 
 ]
 
