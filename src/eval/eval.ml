@@ -74,7 +74,7 @@ let run_str str =
 
 let parse_file file = 
   let open Parsing in 
-      let lexbuf = open_in file |> Lexing.from_channel 
+   let lexbuf = open_in file |> Lexing.from_channel 
       in Parser.program Lexer.read_token lexbuf
 
 let run_file file = 
