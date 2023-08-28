@@ -22,6 +22,3 @@ let rec show_expr e = match e with
         | Lt (left, right) -> "(" ^ "< " ^ show_expr left ^ " " ^show_expr right ^ ")"
         | Gt (left, right) -> "(" ^ "> " ^ show_expr left ^ " " ^show_expr right ^ ")"
         | Debug (expr) -> "(Debug" ^ show_expr expr ^ ")"
-
-let show_program p = match p with
-  | Program expr ->show_expr expr

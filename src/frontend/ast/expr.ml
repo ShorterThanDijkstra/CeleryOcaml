@@ -17,6 +17,3 @@ type expr = Let of (string * expr) list * expr |
            Debug of expr     |
            Mul of expr * expr |
            Div of expr * expr
-
-
-type program = Program of expr

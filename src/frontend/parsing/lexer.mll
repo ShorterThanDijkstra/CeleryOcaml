@@ -38,7 +38,7 @@ rule read_token = parse
   | "-"  { SUB }
   | "*"  { MUL }
   | "/"  { DIV }
-  | "func" { FUNC }
+  | "fun" { FUNC }
   | "->" { RARROW }
   | "{"  { LCURRY }
   | "}"  { RCURRY }

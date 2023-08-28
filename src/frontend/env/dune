@@ -1,4 +1,3 @@
 (library
  (name env)
- (libraries ast)
- )
+ (libraries ast))
